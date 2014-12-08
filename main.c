@@ -50,10 +50,10 @@ static void addForce(struct star* star_A, struct star* star_B)
   prec force = (prec)(G * (double)readMass(star_A) * (double)readMass(star_B) / distance);
   prec fx = force * dx / distance;
   prec fy = force * dy / distance;
-  prec newXForceA = readXForce(star_A) + fx;
-  prec newXForceB = readXForce(star_B) - fx;
-  prec newYForceA = readYForce(star_A) + fy;
-  prec newYForceB = readYForce(star_B) - fy;
+  prec newXForceA = readXForce(star_A) - fx;
+  prec newXForceB = readXForce(star_B) + fx;
+  prec newYForceA = readYForce(star_A) - fy;
+  prec newYForceB = readYForce(star_B) + fy;
   newForce(star_A, newXForceA, newYForceA);
   newForce(star_B, newXForceB, newYForceB);
 }

@@ -14,6 +14,8 @@ animate: star.o
 test: star.o
 	$(CC) -Wall -DTESTING -I$(INCDIR) -L$(LIBDIR) -o test unittests.c star.o main.c $(TESTLIBS) -lm
 	./test
+animate_rec: star.o
+	$(CC) -DANIMATE main_rec.c star.o -o main -lm -lX11
 run:
 	./main
 clean:

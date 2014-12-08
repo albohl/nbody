@@ -21,7 +21,7 @@
 static prec gdt = 0.3;
 
 
-void update_position(struct star* str, prec time_unit)
+static void update_position(struct star* str, prec time_unit)
 {
   prec xacc = readXForce(str) / readMass(str);
   prec xSpeedIncrease = xacc * time_unit;
@@ -40,9 +40,9 @@ void update_position(struct star* str, prec time_unit)
 
 static void resetForce(struct star* str) {
   newForce(str, 0, 0);
-}
+} 
 
-void addForce(struct star* star_A, struct star* star_B)
+static void addForce(struct star* star_A, struct star* star_B)
 {
   prec dx = readXPos(star_A) - readXPos(star_B);
   prec dy = readYPos(star_A) - readYPos(star_B);
@@ -59,7 +59,7 @@ void addForce(struct star* star_A, struct star* star_B)
 }
 
 // Generates a pseudo-random number in the interval 0 to 1
-static prec newRand()
+static prec newRand() 
 {
   prec r = (prec)((double)rand()/(double)RAND_MAX);
   return r;
@@ -81,20 +81,27 @@ void generate_init_values(int number_of_stars, struct star* star_array)
 
 }
 
-static void updateForces(int number_of_stars, struct star* star_array)
+static void resetForces(int number_of_stars, struct star* star_array)
 {
   for(int i = 0; i < number_of_stars; ++i){
     resetForce(&star_array[i]);
   }
-  for(int i = 0; i < number_of_stars; ++i){
-    for(int j = i + 1; j < number_of_stars; ++j){
-      addForce(&star_array[i],&star_array[j]);
+}
+
+static void updateForces(int firstStar, int secondStar, struct star* star_array)
+{
+  if (firstStar > 0){
+    if (secondStar > 1){
+    addForce(&star_array[firstStar],&star_array[secondStar]);
+    updateForces(firstStar, secondStar - 1, star_array);
+    }else{
+      updateForces(firstStar - 1, firstStar - 2, star_array);
     }
   }
 }
 
 // Manually copy coordinates from stars into points (to be drawn).
-// Look at the manual file for XPoint to see which
+// Look at the manual file for XPoint to see which 
 // format XPoint accepts its coordinates in.
 #ifdef ANIMATE
 static void copyToXBuffer(struct star* star_array, XPoint* points, int number_of_stars)
@@ -108,13 +115,9 @@ static void copyToXBuffer(struct star* star_array, XPoint* points, int number_of
 #endif
 
 int main(int argc, char* argv[]) {
-  #ifdef TESTING
-  run_test();
-  return 0;
-  #endif
 
   int number_of_stars = 200;
-  int iterations = 100;
+  int iterations = 1000;
   prec time_unit = gdt;
 
   if(argc == 3)
@@ -124,10 +127,11 @@ int main(int argc, char* argv[]) {
     }
   struct star* star_array = malloc(sizeof(struct star) * number_of_stars);
   generate_init_values(number_of_stars, star_array);
-
-
-
-
+  
+  
+  
+  
+  
 #ifdef ANIMATE
   XPoint* points = malloc(sizeof(XPoint)*number_of_stars);
   Display* disp;
@@ -144,8 +148,8 @@ int main(int argc, char* argv[]) {
   XSetBackground(disp, gc, BlackPixel(disp, screen));
   XMapWindow(disp,window);
 
-  XClearWindow(disp,window);
-
+  XClearWindow(disp,window);	
+	
   copyToXBuffer(star_array, points, number_of_stars);
   XDrawPoints(disp, window, gc, points, number_of_stars, 0);
 
@@ -154,11 +158,13 @@ int main(int argc, char* argv[]) {
 #endif
 
   clock_t start = clock();
-  for(int i = 0; i < iterations; i++){
-    printf("%f\n", readXForce(&star_array[0]));
-#ifndef ANIMATE
+  for(int i = 0; i < iterations; i++)
+    {
 
-     updateForces(number_of_stars, star_array);
+#ifndef ANIMATE
+      
+      resetForces(number_of_stars, star_array);
+      updateForces(number_of_stars, number_of_stars - 1, star_array);
       for(int j = 0; j < number_of_stars; ++j){
         update_position(&star_array[j], time_unit);
       }
@@ -167,7 +173,8 @@ int main(int argc, char* argv[]) {
      
 #ifdef ANIMATE
 
-      updateForces(number_of_stars, star_array);
+      resetForces(number_of_stars, star_array);
+      updateForces(number_of_stars, number_of_stars - 1, star_array);
       for(int j = 0; j < number_of_stars; ++j){
         update_position(&star_array[j], time_unit);
 

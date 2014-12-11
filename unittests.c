@@ -24,7 +24,7 @@ void testUPDATE_POSITION(){
 }
 
 
-void testADDFORCE(){
+void testAddForceStarsAreClose(){
   struct star test_star1 = makeStar();
   struct star test_star2 = makeStar();
   test_star1.xpos = 350; test_star1.ypos = 350;
@@ -38,8 +38,41 @@ void testADDFORCE(){
   test_star2.xforce = 0; test_star2.yforce = 0;
 
   addForce(&test_star1, &test_star2);
-  printf("xf = %f, yf = %f\n", test_star1.xforce, test_star1.yforce);
-  CU_ASSERT(fabs(test_star1.xforce - (-0.18) < 0.01) && fabs(test_star1.yforce - (-0.18)) < 0.01);
+  CU_ASSERT(fabs(test_star1.xforce - (0.18)) < 0.01 && fabs(test_star1.yforce - (0.18)) < 0.01);
+}
+
+void testAddForceStarsAreFarApart(){
+  struct star test_star1 = makeStar();
+  struct star test_star2 = makeStar();
+  test_star1.xpos = 0; test_star1.ypos = 0;
+  test_star1.xspeed = -200; test_star1.yspeed = 200;
+  test_star1.mass = 3;
+  test_star1.xforce = 0; test_star1.yforce = 0;
+
+  test_star2.xpos = 10000; test_star2.ypos = 10000;
+  test_star2.xspeed = -200; test_star2.yspeed = 200;
+  test_star2.mass = 3;
+  test_star2.xforce = 0; test_star2.yforce = 0;
+
+  addForce(&test_star1, &test_star2);
+  CU_ASSERT(fabs(test_star1.xforce) < 0.01 && fabs(test_star1.yforce) < 0.01);
+}
+
+void testAddForceStarsAreVeryClose(){
+  struct star test_star1 = makeStar();
+  struct star test_star2 = makeStar();
+  test_star1.xpos = 0; test_star1.ypos = 0;
+  test_star1.xspeed = -200; test_star1.yspeed = 200;
+  test_star1.mass = 3;
+  test_star1.xforce = 0; test_star1.yforce = 0;
+
+  test_star2.xpos = 1; test_star2.ypos = 1;
+  test_star2.xspeed = -200; test_star2.yspeed = 200;
+  test_star2.mass = 3;
+  test_star2.xforce = 0; test_star2.yforce = 0;
+
+  addForce(&test_star1, &test_star2);
+  CU_ASSERT(fabs(test_star1.xforce) > 4 && fabs(test_star1.yforce) > 4);
 }
 
 
@@ -63,7 +96,10 @@ int run_test()
   }
 
   /* add the tests to the suite */
-  if ((NULL == CU_add_test(pSuite, "Test of update_position", testUPDATE_POSITION)) || (NULL == CU_add_test(pSuite, "Test of addForce", testADDFORCE))){
+  if ((NULL == CU_add_test(pSuite, "Test of update_position", testUPDATE_POSITION)) ||
+      (NULL == CU_add_test(pSuite, "Test of addForce when stars are close", testAddForceStarsAreClose)) ||
+      (NULL == CU_add_test(pSuite, "Test of addForce when stars are far apart", testAddForceStarsAreFarApart)) ||
+      (NULL == CU_add_test(pSuite, "Test of addForce when stars are very close", testAddForceStarsAreVeryClose))){
     CU_cleanup_registry();
     return CU_get_error();
   }

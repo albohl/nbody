@@ -24,9 +24,7 @@ static prec gdt = 0.3;
   @param str the star to be updated
   @param time_unit the amount of time to simulate having passed
  */
-
-void update_position(struct star* str, prec time_unit)
-{
+void update_position(struct star* str, prec time_unit){
   prec xacc = readXForce(str) / readMass(str);
   prec xSpeedIncrease = xacc * time_unit;
   prec yacc = readYForce(str) / readMass(str);
@@ -53,9 +51,7 @@ static void resetForce(struct star* str) {
   @param star_A the first star
   @param star_A the second star
  */
-
-void addForce(struct star* star_A, struct star* star_B)
-{
+void addForce(struct star* star_A, struct star* star_B){
   prec dx = readXPos(star_A) - readXPos(star_B);
   prec dy = readYPos(star_A) - readYPos(star_B);
   prec distance = (double)sqrt(pow(dx, 2.0) + pow(dy, 2.0));
@@ -71,8 +67,7 @@ void addForce(struct star* star_A, struct star* star_B)
 }
 
 // Generates a pseudo-random number in the interval 0 to 1
-static prec newRand()
-{
+static prec newRand(){
   prec r = (prec)((double)rand()/(double)RAND_MAX);
   return r;
 }
@@ -82,8 +77,7 @@ static prec newRand()
   @param star_array the array to store the stars in
  */
 
-void generate_init_values(int number_of_stars, struct star* star_array)
-{
+void generate_init_values(int number_of_stars, struct star* star_array){
   time_t t;
   srand((unsigned) time(&t));
   for(int i = 0; i < number_of_stars; ++i){
@@ -123,9 +117,7 @@ static void updateForces(int number_of_stars, struct star* star_array)
   @param points the array of points
   @param number_of_stars the number of stars to update
  */
-
-static void copyToXBuffer(struct star* star_array, XPoint* points, int number_of_stars)
-{
+static void copyToXBuffer(struct star* star_array, XPoint* points, int number_of_stars){
   for(int i = 0; i < number_of_stars; ++i){
     points[i].x = readXPos(&star_array[i]);
     points[i].y = readYPos(&star_array[i]);
@@ -196,7 +188,7 @@ int main(int argc, char* argv[]) {
       }
 
 #endif
-     
+
 #ifdef ANIMATE
 
       updateForces(number_of_stars, star_array);
@@ -206,14 +198,14 @@ int main(int argc, char* argv[]) {
 
         copyToXBuffer(star_array, points,number_of_stars );
         XDrawPoints(disp, window, gc, points, number_of_stars, CoordModeOrigin);
-	
+
 
       }
       XClearWindow(disp,window);
 
-    
+
 #endif
- 
+
     }
   clock_t stop = clock();
   float diff = (float)(stop - start)/CLOCKS_PER_SEC;

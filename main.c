@@ -20,6 +20,10 @@
 //Delta time
 static prec gdt = 0.3;
 
+/** Updates the position of a star
+  @param str the star to be updated
+  @param time_unit the amount of time to simulate having passed
+ */
 
 void update_position(struct star* str, prec time_unit)
 {
@@ -37,10 +41,18 @@ void update_position(struct star* str, prec time_unit)
   newPos(str, newXPos, newYPos);
 }
 
+/** Resets the force of a star between updates
+  @param str the star to be reset
+ */
 
 static void resetForce(struct star* str) {
   newForce(str, 0, 0);
 }
+
+/** Adds force to two stars based on their mass and distance from eachother
+  @param star_A the first star
+  @param star_A the second star
+ */
 
 void addForce(struct star* star_A, struct star* star_B)
 {
@@ -65,6 +77,10 @@ static prec newRand()
   return r;
 }
 
+/** Generates stars with randomized startvalues.
+  @param number_of_stars the number of stars to generate
+  @param star_array the array to store the stars in
+ */
 
 void generate_init_values(int number_of_stars, struct star* star_array)
 {
@@ -80,6 +96,11 @@ void generate_init_values(int number_of_stars, struct star* star_array)
   }
 
 }
+
+/** Iterates through and resets the forces of all the stars and then updates the forces between each pair of stars.
+  @param number_of_stars the number of stars to update
+  @param star_array the array the stars are stored in
+ */
 
 static void updateForces(int number_of_stars, struct star* star_array)
 {
@@ -97,6 +118,12 @@ static void updateForces(int number_of_stars, struct star* star_array)
 // Look at the manual file for XPoint to see which
 // format XPoint accepts its coordinates in.
 #ifdef ANIMATE
+/** Iterates through and adds points to the pixel buffer for each star
+  @param star_array the array the stars are stored in
+  @param points the array of points
+  @param number_of_stars the number of stars to update
+ */
+
 static void copyToXBuffer(struct star* star_array, XPoint* points, int number_of_stars)
 {
   for(int i = 0; i < number_of_stars; ++i){
@@ -106,6 +133,11 @@ static void copyToXBuffer(struct star* star_array, XPoint* points, int number_of
 
 }
 #endif
+
+/** Runs the program with the number of stars for the number of iterations specified when started or 200 stars for 100 iterations if no arguments are supplied. 
+  @param argc the number of program arguments
+  @param argv the array of arguments
+ */
 
 int main(int argc, char* argv[]) {
   #ifdef TESTING
